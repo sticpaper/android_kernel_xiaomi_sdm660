@@ -114,6 +114,12 @@ all.config
 # Kdevelop4
 *.kdev4
 
+# paper-files
+out
+phone_build.sh
+paper_tools
+toolchain
+
 # fetched Android config fragments
 android/configs/android-*.cfg
 
