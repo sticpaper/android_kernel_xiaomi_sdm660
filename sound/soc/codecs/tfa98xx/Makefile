@@ -18,6 +18,7 @@
 EXTRA_CFLAGS += -Isound/soc/codecs/tfa98xx/inc
 EXTRA_CFLAGS += -DDEBUG
 EXTRA_CFLAGS += -Werror
+EXTRA_CFLAGS += -Wno-enum-conversion
 EXTRA_CFLAGS += $(call cc-option,-Wno-date-time,)
 
 snd-soc-tfa98xx-objs += src/tfa98xx.o
