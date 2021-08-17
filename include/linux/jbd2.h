@@ -735,10 +735,6 @@ struct transaction_run_stats_s {
 	unsigned long		rs_locked;
 	unsigned long		rs_flushing;
 	unsigned long		rs_logging;
-	unsigned long		rs_data_flushed;
-	unsigned long		rs_metadata_flushed;
-	unsigned long		rs_committing;
-	unsigned long		rs_callback;
 
 	__u32			rs_handle_count;
 	__u32			rs_blocks;

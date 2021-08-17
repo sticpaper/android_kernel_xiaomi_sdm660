@@ -35,6 +35,8 @@
 
 #include <trace/events/ext4.h>
 
+#define AID_SYSTEM 1000 /* system server */
+
 /*
  * If we're not journaling and this is a just-created file, we have to
  * sync our parent directory (if it was freshly created) since
@@ -142,27 +144,15 @@ int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
 		needs_barrier = true;
 
 	if (test_opt(inode->i_sb, ASYNC_FSYNC)) {
-		ext4_debug("ext4_sync_file: total sync is %u, async sync is %u\n",
-				  atomic_read(&EXT4_SB(inode->i_sb)->s_total_fsync),
-				  atomic_read(&EXT4_SB(inode->i_sb)->s_async_fsync));
-
 		atomic_inc(&EXT4_SB(inode->i_sb)->s_total_fsync);
-		/*
-		 * If current process is neither root process nor system process and
-		 * current process is not in system group, we don't want to wait
-		 * corresponding transcation to complete.
-		 */
-#define AID_SYSTEM 1000 /* system server */
+
 		if (!uid_eq(GLOBAL_ROOT_UID, current_fsuid()) &&
 			  !(in_group_p(make_kgid(current_user_ns(), AID_SYSTEM)))) {
 			atomic_inc(&EXT4_SB(inode->i_sb)->s_async_fsync);
-			/* Start committing transaction */
+
 			if (jbd2_transaction_need_wait(journal, commit_tid))
 				jbd2_log_start_commit(journal, commit_tid);
 
-			ext4_debug("comm: %s: (uid %u, gid %u): don't wait transaction finish\n",
-				  current->comm, from_kuid_munged(&init_user_ns, current_fsuid()),
-				  from_kgid_munged(&init_user_ns, current_fsgid()));
 			goto out;
 		}
 	}
