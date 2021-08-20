@@ -576,7 +576,7 @@ void gtp_mt_slot_report(struct goodix_ts_data *ts, u8 touch_num,
 				/* valid id will < 10, so id to 0xff to indicate a invalid state */
 				pre_pen_id = 0xff;
 			} else {
-				dev_info(&ts->client->dev, "finger:%d up\n", i);
+				dev_dbg(&ts->client->dev, "finger:%d up\n", i);
 				if (touch_num == 0)
 					input_report_key(ts->input_dev, BTN_TOUCH, 0);
 				input_mt_report_slot_state(ts->input_dev, MT_TOOL_FINGER, false);
