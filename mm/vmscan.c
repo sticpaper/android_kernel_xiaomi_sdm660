@@ -144,7 +144,8 @@ struct scan_control {
 #endif
 
 /*
- * From 0 .. 100.  Higher means more swappy.
+ * From 0 .. 200.  Higher means more swappy.
+ * By default, the highest setting is 100, 200 is only for emergencies.
  */
 int vm_swappiness = 60;
 /*
