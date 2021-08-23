@@ -22,10 +22,6 @@ void pm_get_wakeup_interrupt(struct irq_desc *desc)
 				desc->irq_data.irq,
 				desc->action && desc->action->name ?
 				desc->action->name : "");
-	pr_info("Wakeup IRQ detected during suspend: %d %s",
-				desc->irq_data.irq,
-				desc->action && desc->action->name ?
-				desc->action->name : "");
 }
 
 bool irq_pm_check_wakeup(struct irq_desc *desc)

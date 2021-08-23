@@ -512,54 +512,6 @@ static void msm_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
 	}
 }
 
-static void msm_gpio_print_stats_one(struct gpio_chip *chip, unsigned offset)
-{
-	const struct msm_pingroup *g;
-	struct msm_pinctrl *pctrl = container_of(chip,
-								struct msm_pinctrl, chip);
-	unsigned func;
-	int is_out;
-	int drive;
-	int pull;
-	u32 ctl_reg;
-	static char *pull_stats[] = {
-		"no pull",
-		"pull down",
-		"keeper",
-		"pull up"
-	};
-
-	static char *out_value[] = {
-		"lo",
-		"hi",
-		" "
-	};
-
-	g = &pctrl->soc->groups[offset];
-	ctl_reg = readl_relaxed(pctrl->regs + g->ctl_reg);
-
-	is_out = !!(ctl_reg & BIT(g->oe_bit));
-	func = (ctl_reg >> g->mux_bit) & 7;
-	drive = (ctl_reg >> g->drv_bit) & 7;
-	pull = (ctl_reg >> g->pull_bit) & 3;
-	pr_info(" %-8s: %-3s, %d,  %dmA, %s , %s ",
-			g->name, is_out ? "out" : "in",
-			func, msm_regval_to_drive(drive), pull_stats[pull],
-			out_value[is_out ? (chip->get ?
-			(chip->get(chip, offset) ? 1 : 0) : 2) : 2]);
-}
-
-static void msm_gpio_print_stats(struct gpio_chip *chip)
-{
-	unsigned gpio = chip->base;
-	unsigned i;
-
-	for (i = 0; i < chip->ngpio; i++, gpio++) {
-		if ((i >= 0 && i <= 3) || (i >= 8 && i <= 11))
-			continue;
-		msm_gpio_print_stats_one(chip, i);
-	}
-}
 #else
 #define msm_gpio_dbg_show NULL
 #endif
@@ -572,7 +524,6 @@ static struct gpio_chip msm_gpio_template = {
 	.request          = gpiochip_generic_request,
 	.free             = gpiochip_generic_free,
 	.dbg_show         = msm_gpio_dbg_show,
-	.print_stats       = msm_gpio_print_stats,
 };
 
 /* For dual-edge interrupts in software, since some hardware has no
