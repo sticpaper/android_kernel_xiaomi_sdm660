@@ -341,7 +341,7 @@ static int handle_jeita(struct step_chg_info *chip)
 	if (fv_uv > 0)
 		vote(chip->fv_votable, JEITA_VOTER, true, fv_uv);
 
-	pr_info("%s = %d FCC = %duA FV = %duV\n",
+	pr_debug("%s = %d FCC = %duA FV = %duV\n",
 		step_chg_config.prop_name, pval.intval, fcc_ua, fv_uv);
 
 update_time:

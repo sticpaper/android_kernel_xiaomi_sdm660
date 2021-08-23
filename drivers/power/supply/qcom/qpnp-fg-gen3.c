@@ -5494,17 +5494,6 @@ static void soc_work_fn(struct work_struct *work)
 		pr_err("sram read failed: address=79, rc=%d\n", rc);
 		return;
 	}
-	pr_info("adjust_soc: s %d r %d i %d v %d t %d cc %d m 0x%02x\n",
-			soc,
-			esr_uohms,
-			curr_ua,
-			volt_uv,
-			temp,
-			cycle_count,
-			msoc);
-	pr_info("adjust_soc: 000: %02x, %02x, %02x, %02x\n", buf_top[0], buf_top[1], buf_top[2], buf_top[3]);
-	pr_info("adjust_soc: 019: %02x, %02x, %02x, %02x\n", buf_auto[0], buf_auto[1], buf_auto[2], buf_auto[3]);
-	pr_info("adjust_soc: 079: %02x, %02x, %02x, %02x\n", buf_profile[0], buf_profile[1], buf_profile[2], buf_profile[3]);
 
 	/* if soc changes, report power supply change uevent */
 	if (soc != prev_soc) {
@@ -5676,10 +5665,6 @@ static void fg_battery_soc_smooth_tracking(struct fg_chip *fg)
 		if (batt_psy_initialized(fg))
 			power_supply_changed(fg->batt_psy);
 	}
-
-	pr_info("soc:%d, last_soc:%d, raw_soc:%d, soc_changed:%d.\n",
-				fg->param.batt_soc, last_batt_soc,
-				fg->param.batt_raw_soc, soc_changed);
 }
 
 #define MONITOR_SOC_WAIT_MS	1000
@@ -5705,10 +5690,6 @@ static void soc_monitor_work(struct work_struct *work)
 
 	if (fg->soc_reporting_ready)
 		fg_battery_soc_smooth_tracking(fg);
-
-	pr_info("soc:%d, raw_soc:%d, c:%d, s:%d\n",
-			fg->param.batt_soc, fg->param.batt_raw_soc,
-			fg->param.batt_ma, fg->charge_status);
 
 	schedule_delayed_work(&fg->soc_monitor_work,
 			msecs_to_jiffies(MONITOR_SOC_WAIT_PER_MS));
