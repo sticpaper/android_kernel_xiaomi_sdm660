@@ -247,7 +247,7 @@ static int cpumaxfreq_show(struct seq_file *m, void *v)
 	/* value is used for setting cpumaxfreq */
 	switch (get_hw_version_platform()) {
 	case HARDWARE_PLATFORM_NITROGEN:
-		seq_printf(m, "1.8\n");
+		seq_printf(m, "2.2\n");
 		break;
 	case HARDWARE_PLATFORM_JASON:
 	case HARDWARE_PLATFORM_PLATINA:
@@ -255,7 +255,7 @@ static int cpumaxfreq_show(struct seq_file *m, void *v)
 		break;
 	default:
 		seq_printf(m, "1.0\n");
-		pr_err("Unknown hardware version\n");
+		pr_err("Unknown hardware\n");
 		break;
 	}
 
