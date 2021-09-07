@@ -2290,13 +2290,11 @@ static void dm_init_md_queue(struct mapped_device *md)
 	/*
 	 * Request-based dm devices cannot be stacked on top of bio-based dm
 	 * devices.  The type of this dm device may not have been decided yet.
-	 * The type is decided at the first table loading time.
-	 * To prevent problematic device stacking, clear the queue flag
-	 * for request stacking support until then.
-	 *
-	 * This queue is new, so no concurrency on the queue_flags.
 	 */
 	queue_flag_clear_unlocked(QUEUE_FLAG_STACKABLE, md->queue);
+
+	/* May be sort resembles non-rotational disks */
+	queue_flag_set_unlocked(QUEUE_FLAG_NONROT, md->queue);
 
 	/*
 	 * Initialize data that will only be used by a non-blk-mq DM queue
