@@ -2292,6 +2292,7 @@ static void dm_init_md_queue(struct mapped_device *md)
 	 * devices.  The type of this dm device may not have been decided yet.
 	 */
 	queue_flag_clear_unlocked(QUEUE_FLAG_STACKABLE, md->queue);
+	queue_flag_clear_unlocked(QUEUE_FLAG_ADD_RANDOM, md->queue);
 
 	/* May be sort resembles non-rotational disks */
 	queue_flag_set_unlocked(QUEUE_FLAG_NONROT, md->queue);
