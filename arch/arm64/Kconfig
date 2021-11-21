@@ -1317,3 +1317,14 @@ config BOOT_INFO
          On embedded linux device, we try to collect more information from
          bootloader to kernel. eg. powerup reason.
 
+config XIAOMI_E4
+        bool "xiaomi nitrogen device"
+        select ARCH_SDM660
+        help
+          Support for Xiaomi MAX 3.
+
+config XIAOMI_D19
+        bool "xiaomi platina device"
+        select ARCH_SDM660
+        help
+          Support for Xiaomi Mi 8 Lite.
