@@ -5031,6 +5031,7 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
 	}
 out:
 	mutex_unlock(&inode->i_mutex);
+	ext4_update_time(EXT4_SB(inode->i_sb));
 	trace_ext4_fallocate_exit(inode, offset, max_blocks, ret);
 	return ret;
 }
