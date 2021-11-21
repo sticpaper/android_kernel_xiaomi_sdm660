@@ -1,18 +1,10 @@
 /***********************************************************
 ** Copyright (C), 2008-2018, OPPO Mobile Comm Corp., Ltd.
-** CONFIG_PRODUCT_REALME_RMX1801
 ** File: - discard.c
-** Description: Source file for ext4 async discard suppot.
-** To support ext4 async discard.
 ** Version: 1.0
 ** Date : 2018/11/26
 ** Author: yh@PSW.BSP.Storage.EXT4
-**
-** ------------------------------- Revision History:-------------------------------
-** <author> <data> <version > <desc>
-** yh 2018/11/26 1.0 build this module
-****************************************************************/
-
+************************************************************/
 #include <linux/fs.h>
 #include <linux/bio.h>
 #include <linux/blkdev.h>
@@ -107,16 +99,16 @@ static int issue_discard_thread(void *data)
 
 		issued = ext4_trim_groups(sbi->s_sb, dcc, 0);
 
-		if (issued > 0) {//issued >0
+		if (issued > 0) {
 			wait_ms = dcc->dpolicy.min_interval;
-		}else if ((issued == 0) && dcc->io_interrupted){//io_interrupted
+		} else if ((issued == 0) && dcc->io_interrupted){
 			dcc->io_interrupted = false;
 			delta = (sbi->last_time + interval) - jiffies;
 			if (delta > 0)
 				wait_ms = jiffies_to_msecs(delta);
 			else
 				wait_ms = dcc->dpolicy.mid_interval;
-		}else {//issued <= 0, for idle or error
+		} else {
 			wait_ms = dcc->dpolicy.max_interval;
 		}
 
@@ -141,7 +133,7 @@ int create_discard_cmd_control(struct ext4_sb_info *sbi)
 	if (!dcc)
 		return -ENOMEM;
 
-	dcc->groups_block_bitmap = vmalloc((sbi->s_clusters_per_group/8) * sbi->s_groups_count); //for backup groups block bitmap
+	dcc->groups_block_bitmap = vmalloc((sbi->s_clusters_per_group/8) * sbi->s_groups_count);
 	if (!dcc->groups_block_bitmap)
 		goto free_dcc;
 	memset(dcc->groups_block_bitmap, 0xFF, (sbi->s_clusters_per_group/8) * sbi->s_groups_count);
@@ -151,8 +143,8 @@ int create_discard_cmd_control(struct ext4_sb_info *sbi)
 	mutex_init(&dcc->cmd_lock);
 	dcc->issued_discard = 0;
 	dcc->max_discards = ext4_free_blocks_count(sbi->s_es);
-	dcc->group_start = 0;	/* trim start group */
-	dcc->blk_offset = 0;	/* group internal blk offset */
+	dcc->group_start = 0;
+	dcc->blk_offset = 0;
 
 	init_waitqueue_head(&dcc->discard_wait_queue);
 	sbi->dcc_info = dcc;
@@ -198,7 +190,7 @@ int ext4_seq_discard_info_show(struct seq_file *seq, void *v)
 		return 0;
 
 	if (!test_opt(sb, ASYNC_DISCARD)){
-		seq_printf(seq, "async_discard option is closed !\n");
+		seq_printf(seq, "no async_discard flags\n");
         return 0;    
     }
 
@@ -210,7 +202,6 @@ int ext4_seq_discard_info_show(struct seq_file *seq, void *v)
 		   sbi->dcc_info->group_start,
 		   sbi->dcc_info->blk_offset,
 		   sbi->dcc_info->cnt_io_interrupted);
-
 	seq_printf(seq, "Dpolicy info:\n  discard type:%d\n  min_interval:%d\n  mid_interval:%d\n  max_interval:%d\n",
 		   sbi->dcc_info->dpolicy.type, sbi->dcc_info->dpolicy.min_interval,
 		   sbi->dcc_info->dpolicy.mid_interval, sbi->dcc_info->dpolicy.max_interval);
