@@ -315,7 +315,7 @@
 					compatible = "android,system";
 					dev = "/dev/block/platform/soc/c0c4000.sdhci/by-name/system";
 					type = "ext4";
-					mnt_flags = "ro,barrier=1,discard";
+					mnt_flags = "ro,barrier=1,async_discard";
 					fsmgr_flags = "wait";
 					status = "ok";
 				};
@@ -323,7 +323,7 @@
 					compatible = "android,vendor";
 					dev = "/dev/block/platform/soc/c0c4000.sdhci/by-name/vendor";
 					type = "ext4";
-					mnt_flags = "ro,barrier=1,discard";
+					mnt_flags = "ro,barrier=1,async_discard";
 					fsmgr_flags = "wait";
 					status = "ok";
 				};
