@@ -5482,8 +5482,7 @@ int ext4_trim_groups(struct super_block *sb,  struct discard_cmd_control *dcc,
 				ret = cnt;
 				break;
 			}
-			trace_printk("discard info:group:%d, internal offset:%d, end:%lld, minlen:%lld, trimed cnt:%d\n",
-									group, first_cluster, end, minlen, cnt);
+
 			trimmed += cnt;
 
 			/* Check the total issued trim per round */
