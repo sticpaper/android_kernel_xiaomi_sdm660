@@ -90,28 +90,6 @@ done:
 	return;
 }
 
-void dfs_print_nol(struct ath_dfs *dfs)
-{
-	struct dfs_nolelem *nol;
-	uint32_t diff_ms, remaining_sec;
-
-	if (dfs == NULL) {
-		DFS_DPRINTK(dfs, ATH_DEBUG_DFS_NOL, "%s: sc_dfs is NULL",
-			    __func__);
-		return;
-	}
-	nol = dfs->dfs_nol;
-	DFS_DPRINTK(dfs, ATH_DEBUG_DFS_NOL, "%s: NOL", __func__);
-	while (nol != NULL) {
-		diff_ms =
-			qdf_system_ticks_to_msecs(qdf_system_ticks() -
-						  nol->nol_start_ticks);
-		diff_ms = (nol->nol_timeout_ms - diff_ms);
-		remaining_sec = diff_ms / 1000; /* convert to seconds */
-		nol = nol->nol_next;
-	}
-}
-
 void
 dfs_get_nol(struct ath_dfs *dfs, struct dfsreq_nolelem *dfs_nol, int *nchan)
 {
