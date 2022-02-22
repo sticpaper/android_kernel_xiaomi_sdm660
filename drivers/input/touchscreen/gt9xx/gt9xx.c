@@ -24,6 +24,9 @@
 #include <linux/pinctrl/consumer.h>
 #include <linux/input/mt.h>
 #include <linux/debugfs.h>
+#ifdef CONFIG_TOUCHSCREEN_COMMON
+#include <linux/input/tp_common.h>
+#endif
 #include "gt9xx.h"
 
 #define GOODIX_COORDS_ARR_SIZE	4
@@ -675,6 +678,35 @@ static void gtp_work_func(struct goodix_ts_data *ts)
 	else
 		gtp_type_a_report(ts, point_state & 0x0f, points);
 }
+
+#ifdef CONFIG_TOUCHSCREEN_COMMON
+static ssize_t double_tap_show(struct kobject *kobj,
+				struct kobj_attribute *attr, char *buf)
+{
+	struct goodix_ts_data *ts = i2c_get_clientdata(i2c_connect_client);
+	return sprintf(buf, "%d\n", ts->pdata->slide_wakeup);
+}
+
+static ssize_t double_tap_store(struct kobject *kobj,
+				struct kobj_attribute *attr, const char *buf,
+				size_t count)
+{
+	struct goodix_ts_data *ts = i2c_get_clientdata(i2c_connect_client);
+	int rc, val;
+
+	rc = kstrtoint(buf, 10, &val);
+	if (rc)
+		return -EINVAL;
+
+	ts->pdata->slide_wakeup = !!val;
+	return count;
+}
+
+static struct tp_common_ops double_tap_ops = {
+	.show = double_tap_show,
+	.store = double_tap_store
+};
+#endif
 
 /*******************************************************
  * Function:
@@ -2368,6 +2400,9 @@ static int gtp_probe(struct i2c_client *client, const struct i2c_device_id *id)
 	ts->tpfs = debugfs_create_dir("touch", NULL);
 	if (ts->tpfs)
 		debugfs_create_file("tp_ic_vendor", 0400, ts->tpfs, ts, &tp_ic_vendor_operations);
+#endif
+#ifdef CONFIG_TOUCHSCREEN_COMMON
+	tp_common_set_double_tap_ops(&double_tap_ops);
 #endif
 #ifdef CONFIG_TOUCHSCREEN_GT9XX_SELFTEST
 	gtp_test_sysfs_init();
