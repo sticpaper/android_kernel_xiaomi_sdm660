@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011-2018 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2020 XiaoMi, Inc.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -624,6 +625,7 @@ struct csr_config {
 	uint32_t bss_load_threshold;
 	uint32_t bss_load_sample_time;
 	bool roaming_scan_policy;
+	bool compatibleModeSet;
 };
 
 struct csr_channel_powerinfo {

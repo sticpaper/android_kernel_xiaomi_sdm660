@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012-2018 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2020 XiaoMi, Inc.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -380,9 +381,11 @@ static void lim_handle_join_rsp_status(tpAniSirGlobal mac_ctx,
 			SIR_MAC_VENDOR_AP_1_OUI, SIR_MAC_VENDOR_AP_1_OUI_LEN,
 			bss_ies, bss_ie_len) != NULL);
 
-		if (mac_ctx->roam.configParam.is_force_1x1_enable &&
-		    is_vendor_ap_1_present && (session_entry->nss == 2) &&
-		    (mac_ctx->lteCoexAntShare == 0 ||
+		if (((mac_ctx->roam.configParam.is_force_1x1_enable &&
+			is_vendor_ap_1_present) ||
+			mac_ctx->roam.configParam.compatibleModeSet) &&
+			(session_entry->nss == 2) &&
+			(mac_ctx->lteCoexAntShare == 0 ||
 				IS_5G_CH(session_entry->currentOperChannel))) {
 			/* SET vdev param */
 			pe_debug("sending SMPS intolrent vdev_param");

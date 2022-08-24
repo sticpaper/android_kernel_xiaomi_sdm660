@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016-2019 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2020 XiaoMi, Inc.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -10213,6 +10214,11 @@ static QDF_STATUS send_regdomain_info_to_fw_cmd_tlv(wmi_unified_t wmi_handle,
 	cmd->reg_domain_5G = regdmn5G;
 	cmd->conformance_test_limit_2G = ctl2G;
 	cmd->conformance_test_limit_5G = ctl5G;
+
+	wmi_debug("regd = %x, regd_2g = %x, regd_5g = %x, ctl_2g = %x, ctl_5g = %x",
+		  cmd->reg_domain, cmd->reg_domain_2G, cmd->reg_domain_5G,
+		  cmd->conformance_test_limit_2G,
+		  cmd->conformance_test_limit_5G);
 
 	wmi_mtrace(WMI_PDEV_SET_REGDOMAIN_CMDID, NO_SESSION, 0);
 	if (wmi_unified_cmd_send(wmi_handle, buf, len,
@@ -22207,10 +22213,14 @@ extract_roam_scan_stats_res_evt_tlv(wmi_unified_t wmi_handle, void *evt_buf,
 
 	num_scans = fixed_param->num_roam_scans;
 	scan_param_size = sizeof(struct wmi_roam_scan_stats_params);
-	*vdev_id = fixed_param->vdev_id;
 	if (num_scans > WMI_ROAM_SCAN_STATS_MAX) {
 		wmi_err_rl("%u exceeded maximum roam scan stats: %u",
 			   num_scans, WMI_ROAM_SCAN_STATS_MAX);
+		return QDF_STATUS_E_INVAL;
+	}
+	*vdev_id = fixed_param->vdev_id;
+	if ((num_scans > ((UINT_MAX - sizeof(*res)) / scan_param_size))) {
+		WMI_LOGP("%s: Invalid num_roam_scans %d", __func__, num_scans);
 		return QDF_STATUS_E_INVAL;
 	}
 

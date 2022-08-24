@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2011-2019 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2020 XiaoMi, Inc.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -703,6 +704,13 @@ typedef enum {
 } eCsrSetKeyAction;
 
 typedef enum {
+	eCSR_BAND_ALL,
+	eCSR_BAND_24,
+	eCSR_BAND_5G,
+	eCSR_BAND_MAX,
+} eCsrBand;
+
+typedef enum {
 	/*
 	 * Roaming because HDD requested for reassoc by changing one of the
 	 * fields in tCsrRoamModifyProfileFields. OR Roaming because SME
@@ -1313,6 +1321,7 @@ typedef struct tagCsrConfigParam {
 	bool enable_bss_load_roam_trigger;
 	uint32_t bss_load_threshold;
 	uint32_t bss_load_sample_time;
+	bool compatibleModeSet;
 } tCsrConfigParam;
 
 /* Tush */

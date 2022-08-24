@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012-2018 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2020 XiaoMi, Inc.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -12849,6 +12850,20 @@ int sme_update_he_ldpc_supp(tHalHandle hal, uint8_t session_id,
 	return sme_update_he_cap(hal, session_id, WNI_CFG_HE_LDPC, he_ldpc);
 }
 #endif
+
+/**
+ * sme_update_compatible_mode() - sets the compatible mode based on user request
+ * @hal: Pointer to HAL
+ * @mode: if compatible enabled
+ *
+ * Return: None
+ */
+void sme_update_compatible_mode(tHalHandle hal, bool mode) 
+{
+        tpAniSirGlobal mac_ctx = PMAC_STRUCT(hal);
+
+        mac_ctx->roam.configParam.compatibleModeSet = mode; 
+}
 
 /**
  * sme_set_nud_debug_stats_cb() - set nud debug stats callback

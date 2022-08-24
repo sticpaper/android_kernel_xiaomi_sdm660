@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012-2019 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2020 XiaoMi, Inc.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -16476,6 +16477,7 @@ struct hdd_config {
 	uint8_t vhtTxMCS2x2;
 	uint8_t disable_high_ht_mcs_2x2;
 	bool enable2x2;
+        uint32_t vdev_type_nss_2g;
 	uint8_t txchainmask1x1;
 	uint8_t rxchainmask1x1;
 	bool enableMuBformee;

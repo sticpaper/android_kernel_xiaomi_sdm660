@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012-2019 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2020 XiaoMi, Inc.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -2823,6 +2824,8 @@ QDF_STATUS csr_change_default_config_param(tpAniSirGlobal pMac,
 			pParam->pkt_err_disconn_th;
 		pMac->roam.configParam.is_force_1x1_enable =
 			pParam->is_force_1x1_enable;
+		pMac->roam.configParam.compatibleModeSet =
+			pParam->compatibleModeSet;
 		pMac->roam.configParam.WMMSupportMode = pParam->WMMSupportMode;
 		cfg_set_int(pMac, WNI_CFG_WME_ENABLED,
 			(pParam->WMMSupportMode == eCsrRoamWmmNoQos) ? 0 : 1);
@@ -3432,6 +3435,7 @@ QDF_STATUS csr_get_config_param(tpAniSirGlobal pMac, tCsrConfigParam *pParam)
 
 	pParam->pkt_err_disconn_th = cfg_params->pkt_err_disconn_th;
 	pParam->is_force_1x1_enable = cfg_params->is_force_1x1_enable;
+	pParam->compatibleModeSet = cfg_params->compatibleModeSet;
 	pParam->WMMSupportMode = cfg_params->WMMSupportMode;
 	pParam->Is11eSupportEnabled = cfg_params->Is11eSupportEnabled;
 	pParam->FragmentationThreshold = cfg_params->FragmentationThreshold;

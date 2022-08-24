@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012-2019 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2020 XiaoMi, Inc.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -23,6 +24,7 @@
 #include <wlan_hdd_stats.h>
 #include "wlan_hdd_trace.h"
 #include "wlan_hdd_ioctl.h"
+#include "wlan_hdd_main.h"
 #include "wlan_hdd_power.h"
 #include "wlan_hdd_regulatory.h"
 #include "wlan_osif_request_manager.h"
@@ -3172,6 +3174,48 @@ static inline int drv_cmd_country(struct hdd_adapter *adapter,
 		return -EINVAL;
 
 	return hdd_reg_set_country(hdd_ctx, country_code);
+}
+
+/**
+ * drv_cmd_set_suspendmode() - Handler for set suspendmode
+ * @adapter: pointer to adapter on which request is received
+ * @hdd_ctx: pointer to hdd context
+ * @command: command name
+ * @command_len: command buffer length
+ * @priv_data: output pointer to hold current country code
+ *
+ * Return: On success 0, negative value on error.
+ */
+static int drv_cmd_set_suspendmode(struct hdd_adapter *adapter,
+			       struct hdd_context *hdd_ctx,
+			       uint8_t *command, uint8_t command_len,
+			       struct hdd_priv_data *priv_data)
+{
+	char *suspendmode;
+	bool apf_enable = false;
+	QDF_STATUS status;
+
+	hdd_enter();
+	hdd_prevent_suspend(WIFI_POWER_EVENT_WAKELOCK_WOW);
+	suspendmode = command + 15;
+	if ('1' == *suspendmode) {
+		apf_enable = true;
+	} else if ('0' == *suspendmode) {
+		apf_enable = false;
+	}
+
+	status = sme_set_apf_enable_disable(hdd_adapter_get_mac_handle(adapter),
+					    adapter->session_id, apf_enable);
+	if (!QDF_IS_STATUS_SUCCESS(status)) {
+		hdd_err("Unable to post sme apf enable/disable message (status-%d)",
+				status);
+		return -EINVAL;
+	}
+	adapter->apf_context.apf_enabled = apf_enable;
+
+	hdd_allow_suspend(WIFI_POWER_EVENT_WAKELOCK_WOW);
+	hdd_exit();
+	return 0;
 }
 
 /**
@@ -7518,6 +7562,59 @@ static int drv_cmd_get_disable_chan_list(struct hdd_adapter *adapter,
 	return 0;
 }
 #endif
+
+/**
+ * drv_cmd_set_compatible_mode() - Set compatible mode
+ * @adapter: HDD adapter
+ * @hdd_ctx: HDD context
+ * @command: Pointer to the input command CHANNEL_SWITCH
+ * @command_len: Command len
+ * @priv_data: Private data
+ *
+ * If the compatible mode is set, SMPS frame is not allowed. So antenna
+ * sharing feature will not work. The DBS scan will work as compatible mode
+ *
+ * Return: 0 for success, non-zero for failure
+ */
+static int drv_cmd_set_compatible_mode(struct hdd_adapter *adapter,
+				   struct hdd_context *hdd_ctx,
+				   uint8_t *command,
+				   uint8_t command_len,
+				  struct hdd_priv_data *priv_data)
+{
+	uint32_t comMode;
+	uint8_t *value = command;
+	struct hdd_config *cfg_ini = hdd_ctx->config;
+	uint8_t max_supp_nss = 1;
+
+	hdd_info("%s", command);
+
+	/* Move pointer to ahead of ENABLEDATASTALLDETECTION */
+	value = value + command_len + 1;
+
+	if (!(sscanf(value, "%d", &comMode))) {
+		QDF_TRACE(QDF_MODULE_ID_HDD, QDF_TRACE_LEVEL_INFO,
+			("No input identified"));
+		return -EINVAL;
+	}
+
+	if (comMode == 1) {
+		/* force STA work at 1x1 mode */
+		cfg_ini->vdev_type_nss_2g = 0x5555;
+	} else {
+		/* STA will work at 2x2 mode */
+		cfg_ini->vdev_type_nss_2g = 0x5556;
+	}
+
+	if (cfg_ini->enable2x2 && !cds_is_sub_20_mhz_enabled())
+		max_supp_nss = 2;
+
+	sme_update_vdev_type_nss(hdd_ctx->mac_handle, max_supp_nss,
+		cfg_ini->vdev_type_nss_2g, eCSR_BAND_24);
+
+	return 0;
+}
+
 /*
  * The following table contains all supported WLAN HDD
  * IOCTL driver commands and the handler for each of them.
@@ -7531,7 +7628,7 @@ static const struct hdd_drv_cmd hdd_drv_cmds[] = {
 	{"COUNTRY",                   drv_cmd_country, true},
 	{"SETCOUNTRYREV",             drv_cmd_country, true},
 	{"GETCOUNTRYREV",             drv_cmd_get_country, false},
-	{"SETSUSPENDMODE",            drv_cmd_dummy, false},
+	{"SETSUSPENDMODE",            drv_cmd_set_suspendmode, true},
 	{"SET_AP_WPS_P2P_IE",         drv_cmd_dummy, false},
 	{"SETROAMTRIGGER",            drv_cmd_set_roam_trigger, true},
 	{"GETROAMTRIGGER",            drv_cmd_get_roam_trigger, false},
@@ -7637,6 +7734,7 @@ static const struct hdd_drv_cmd hdd_drv_cmds[] = {
 	{"RXFILTER-STOP",             drv_cmd_dummy, false},
 	{"BTCOEXSCAN-START",          drv_cmd_dummy, false},
 	{"BTCOEXSCAN-STOP",           drv_cmd_dummy, false},
+	{"SETCOMPATIBLEMODE",         drv_cmd_set_compatible_mode,false},
 };
 
 /**

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012-2019 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2020 XiaoMi, Inc.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -12192,8 +12193,12 @@ int hdd_wlan_startup(struct device *dev)
 	else
 		hdd_set_idle_ps_config(hdd_ctx, false);
 
-	if (QDF_GLOBAL_FTM_MODE != hdd_get_conparam())
+	if (QDF_GLOBAL_FTM_MODE != hdd_get_conparam()) {
+                hdd_ctx->compatibleModeSet = false;
+                sme_update_compatible_mode(hdd_ctx->mac_handle, hdd_ctx->compatibleModeSet);
+
 		hdd_psoc_idle_timer_start(hdd_ctx);
+	}
 
 	hdd_debugfs_mws_coex_info_init(hdd_ctx);
 	goto success;

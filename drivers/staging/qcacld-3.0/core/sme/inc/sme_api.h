@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2012-2018 The Linux Foundation. All rights reserved.
+ * Copyright (C) 2020 XiaoMi, Inc.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -1211,7 +1212,7 @@ QDF_STATUS sme_register_mgmt_frame_ind_callback(tHalHandle hal,
 
 QDF_STATUS sme_update_nss(tHalHandle h_hal, uint8_t nss);
 void sme_update_user_configured_nss(tHalHandle hal, uint8_t nss);
-
+void sme_update_compatible_mode(tHalHandle hal, bool mode);
 bool sme_is_any_session_in_connected_state(tHalHandle h_hal);
 
 QDF_STATUS sme_pdev_set_pcl(struct policy_mgr_pcl_list *msg);
