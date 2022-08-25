@@ -114,6 +114,10 @@ all.config
 # Kdevelop4
 *.kdev4
 
+# Independent repository build
+out
+kbuild.sh
+
 # fetched Android config fragments
 android/configs/android-*.cfg
 
