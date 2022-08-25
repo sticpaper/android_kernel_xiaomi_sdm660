@@ -2244,7 +2244,7 @@ static int qpnp_hap_set(struct qpnp_hap *hap, int on)
 				auto_res_mode_qwd = (hap->auto_res_mode ==
 							QPNP_HAP_AUTO_RES_QWD);
 			/*PM660 don't have "none" for auto-res mode.*/
-			if ((hap->act_type == QPNP_HAP_LRA))
+			if (hap->act_type == QPNP_HAP_LRA)
 				qpnp_hap_auto_res_enable(hap, 0);
 
 			if (hap->vmax_overdrive_mv)
