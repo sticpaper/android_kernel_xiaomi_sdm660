@@ -439,7 +439,7 @@ static int parse_options(struct super_block *sb, char *options)
 				f2fs_warn(sbi, "discard is required for zoned block devices");
 				return -EINVAL;
 			}
-			clear_opt(sbi, DISCARD);
+			set_opt(sbi, DISCARD);
 			break;
 		case Opt_noheap:
 			set_opt(sbi, NOHEAP);
