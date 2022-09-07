@@ -1433,12 +1433,6 @@ struct ext4_sb_info {
 	/* record the last minlen when FITRIM is called. */
 	atomic_t s_last_trim_minblks;
 
-	/* of issued fsync/fdatasync */
-	atomic_t s_total_fsync;
-
-	/* of issued fsync/fdatasync which don't need to wait transaction to complete */
-	atomic_t s_async_fsync;
-
 	/* Reference to checksum algorithm driver via cryptoapi */
 	struct crypto_shash *s_chksum_driver;
 
