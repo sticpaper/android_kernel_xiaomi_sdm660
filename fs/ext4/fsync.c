@@ -144,11 +144,8 @@ int ext4_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
 		needs_barrier = true;
 
 	if (test_opt(inode->i_sb, ASYNC_FSYNC)) {
-		atomic_inc(&EXT4_SB(inode->i_sb)->s_total_fsync);
-
 		if (!uid_eq(GLOBAL_ROOT_UID, current_fsuid()) &&
 			  !(in_group_p(make_kgid(current_user_ns(), AID_SYSTEM)))) {
-			atomic_inc(&EXT4_SB(inode->i_sb)->s_async_fsync);
 
 			if (jbd2_transaction_need_wait(journal, commit_tid))
 				jbd2_log_start_commit(journal, commit_tid);
